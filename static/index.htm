@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+
+<head>
+
+  <title>NYC Boba</title>
+  <meta charset="utf-8" />
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.14.2/highlight.min.js"></script>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+  <script src="https://d3js.org/topojson.v2.min.js"></script>
+
+  <style>
+    body {
+      background-color: #f0e7e0;
+    }
+
+    h1,
+    h2 {
+      text-align: center;
+
+    }
+
+    h1,
+    h2,
+    h3,
+    p,
+    span {
+      color: #604d49;
+    }
+
+    .intro-text,
+    .second-text {
+      margin-top: 50px;
+      margin-left: 25%;
+      margin-right: 25%;
+      margin-bottom: 70px;
+      text-indent: 4em;
+      /* or 15px, or 5%, 2rem or 3vw */
+    }
+
+    span,
+    .desc p {
+      line-height: 25px;
+      font-size: 17px;
+    }
+
+    #contain {
+      display: flex;
+      justify-content: center;
+    }
+
+    #side {
+      display: flex;
+      flex-direction: column;
+      margin-left: 45px;
+      width: 350px;
+    }
+
+    .filters {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .row {
+      display: flex;
+    }
+
+    .row span {
+      margin: 4.5px 0px;
+    }
+
+    .col {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    button {
+      margin: 5px;
+      font-size: 18px;
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    #filterbutton {
+      margin-top: 25px;
+      border: none;
+      background-color: #604d49;
+      color: #ffff;
+    }
+
+    #filterbutton:hover {
+      background-color: #937f74;
+      cursor: pointer;
+    }
+
+    #clearbutton {
+      color: #604d49;
+      border: 3px #604d49 solid;
+      background-color: #ffff;
+    }
+
+    #clearbutton:hover {
+      background-color: #eaeaea;
+      cursor: pointer;
+    }
+
+    #button {
+      margin-top: -20px;
+      margin-left: 40px;
+    }
+
+    .neighborhood {
+      fill: #b4abd29e;
+      stroke: #f0e7e0;
+      stroke-width: 1px;
+    }
+
+    rect.handle {
+      display: none;
+    }
+
+    rect.overlay {
+      display: none;
+    }
+
+    .txts {
+      font-family: Arial, sans-serif;
+    }
+
+    #graph {
+      margin-bottom: 110px;
+    }
+
+    .all-graph-sliders {
+      display: flex;
+      justify-content: center;
+      margin-top: 70px;
+      margin-bottom: 40px;
+    }
+
+    .graph-slider {
+      margin-left: 60px;
+      margin-right: 60px;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <h1>Hi This is the Title Yippee!</h1>
+
+  <div class="intro-text">
+    <p>Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba
+      text Boba text
+      Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text. Boba text Boba text
+      Boba
+      text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text
+      Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text. Boba text Boba text
+      Boba
+      text Boba text Boba text Boba text Boba text Boba text Boba textBoba text. Boba text Boba text Boba text Boba text
+      Boba text Boba text Boba text Boba text Boba text Boba text Boba text
+      Boba text Boba text Boba text Boba text Boba text Boba text Boba text.
+    </p>
+    <p>Boba text Boba text Boba text Boba text Boba text Boba text Boba text
+      Boba text Boba text Boba text Boba text
+      Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text. Boba text Boba text
+      Boba
+      text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text
+      Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text. Boba text Boba text
+      Boba
+      text Boba text Boba text Boba text Boba text Boba text Boba textBoba text. Boba text Boba text Boba text Boba text
+      Boba text Boba text Boba text Boba text Boba text Boba text Boba text
+      Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text. Boba text Boba text
+      Boba
+      text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text
+      Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text. Boba text Boba text
+      Boba.
+    </p>
+    <p>Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba
+      text Boba text
+      Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text. Boba text Boba text
+      Boba
+      text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text
+      Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text. Boba text Boba text
+      Boba
+      text Boba text Boba text Boba text Boba text Boba text Boba textBoba text. Boba text Boba text Boba text Boba text
+      Boba text Boba text Boba text Boba text Boba text Boba text Boba text
+      Boba text Boba text Boba text Boba text Boba text Boba text Boba text.
+    </p>
+  </div>
+
+  <h2>Vizualisation 1: Map Title!</h2>
+
+  <div id="contain">
+
+    <svg width="1200" height="900">
+      <g id="map" width="1200" height="900"></g>
+      <g id="minim" width="280" height="280" transform="translate(900,1)">
+        <rect x="0" y="0" width="280" height="280" stroke="darkgrey" fill="white" opacity="1" />
+      </g>
+    </svg>
+
+    <div id="side">
+      <div class="desc">
+        <p>
+          Boba text Boba text Boba text Boba text Boba text Boba textBoba text.</p>
+      </div>
+
+
+      <h3>Filter by Borough:</h3>
+
+      <div class="row">
+        <div class="col">
+          <span class="check"><input type="checkbox" class="neighborhoodcheckbox" name="Downtown"
+              value="Downtown">Bronx</span>
+          <span class="check"><input type="checkbox" class="neighborhoodcheckbox" name="Lawrenceville"
+              value="Lawrenceville">Brooklyn</span>
+          <span class="check"><input type="checkbox" class="neighborhoodcheckbox" name="Oakland"
+              value="Oakland">Manhattan</span>
+        </div>
+
+        <div class="col">
+          <span class="check"><input type="checkbox" class="neighborhoodcheckbox" name="South Side"
+              value="South Side">Queens</span>
+          <span class="check"><input type="checkbox" class="neighborhoodcheckbox" name="Squirrel Hill"
+              value="Squirrel Hill">Staten Island</span>
+        </div>
+      </div>
+
+      <h3>Slider by Price:</h3>
+      <p>0 --------- $ --------- $$ ------- $$$$</p>
+      <tr>
+        <td><input type="range" name="priceslider" value="${9.5 / 2}" min="0" max="3" step="1" style="width: 200px;">
+        </td>
+        <td style="text-align: right;">0<span class="priceslider"></span></td>
+      </tr>
+
+      <h3>Slider by Rating:</h3>
+      <p>0 ------- &le;1 ------- &le;2 ------- &le;3 ------- &le;4 ------- 5</p>
+      <tr>
+        <td><input type="range" name="ratingslider" value="${9.5 / 2}" min="0" max="5" step="1" style="width: 310px;">
+        </td>
+        <td style="text-align: right;">0<span class="ratingslider"></span></td>
+      </tr>
+
+      <div class="filters">
+        <h3>Filter by Category:</h3>
+
+        <div class="row">
+          <div class="col">
+            <span class="check"><input type="checkbox" class="checkbox" name="uniquename"
+                value="uniquename">category</span>
+            <span class="check"><input type="checkbox" class="checkbox" name="" value="">category</span>
+            <span class="check"><input type="checkbox" class="checkbox" name="" value="">category</span>
+            <span class="check"><input type="checkbox" class="checkbox" name="cafes" value="cafes">category</span>
+            <span class="check"><input type="checkbox" class="checkbox" name="" value="">category</span>
+            <span class="check"><input type="checkbox" class="checkbox" name="" value="">category</span>
+          </div>
+
+          <div class="col">
+            <span class="check"><input type="checkbox" class="checkbox" name="uniquename"
+                value="uniquename">category</span>
+            <span class="check"><input type="checkbox" class="checkbox" name="" value="">category</span>
+            <span class="check"><input type="checkbox" class="checkbox" name="" value="">category</span>
+            <span class="check"><input type="checkbox" class="checkbox" name="cafes" value="cafes">category</span>
+            <span class="check"><input type="checkbox" class="checkbox" name="" value="">category</span>
+            <span class="check"><input type="checkbox" class="checkbox" name="" value="">category</span>
+          </div>
+        </div>
+
+        <button type="button" id="filterbutton" name="button">Filter!</button>
+        <button type="button" id="clearbutton" name="button" class="clear">clear</button>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="second-text">
+    <p>Wow that was so cool! Boba text Boba text Boba text Boba text Boba text Boba text Boba text
+      Boba text Boba text Boba text Boba text
+      Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text. Boba text Boba text
+      Boba
+      text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text
+      Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text. Boba text Boba text
+      Boba
+      text Boba text Boba text Boba text Boba text Boba text Boba textBoba text. Boba text Boba text Boba text Boba text
+      Boba text Boba text Boba text Boba text Boba text Boba text Boba text
+      Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text. Boba text Boba text
+      Boba
+      text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text
+      Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text. Boba text Boba text
+      Boba
+      text Boba text Boba text Boba text Boba text Boba text Boba textBoba text.
+    </p>
+    <p>Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba
+      text Boba text
+      Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text. Boba text Boba text
+      Boba
+      text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text
+      Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text. Boba text Boba text
+      Boba
+      text Boba text Boba text Boba text Boba text Boba text Boba textBoba text. Boba text Boba text Boba text Boba text
+      Boba text Boba text Boba text Boba text Boba text Boba text Boba text
+      Boba text Boba text Boba text Boba text Boba text Boba text Boba text.
+    </p>
+    <p>Boba text Boba text Boba text Boba text Boba text Boba text Boba text
+      Boba text Boba text Boba text Boba text
+      Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text. Boba text Boba text
+      Boba
+      text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text
+      Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text. Boba text Boba text
+      Boba
+      text Boba text Boba text Boba text Boba text Boba text Boba textBoba text. Boba text Boba text Boba text Boba text
+      Boba text Boba text Boba text Boba text Boba text Boba text Boba text
+      Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text. Boba text Boba text
+      Boba
+      text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text
+      Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text Boba text. Boba text Boba text
+      Boba.
+    </p>
+  </div>
+
+  <h2>Vizualisation 2: Graph Title!</h2>
+
+  <h2>Customize your drink order to discover optimized boba consumption per sip on the graph.</h2>
+
+
+  <div class="all-graph-sliders">
+    <table class="graph-slider cup" style="width: auto">
+      <tr>
+        <th colspan="3">Cup dimension</th>
+      </tr>
+      <tr>
+        <td><i>Top radius</i></td>
+        <td><input type="range" name="cupTopRadius" value="${9.5 / 2}" min="${5.5 / 2}" max="${15.5 / 2}" step="1"
+            style="width: 200px;"></td>
+        <td style="text-align: right;"><span class="cupTopRadius"></span> cm</td>
+      </tr>
+      <tr>
+        <td><i>Bottom radius</i></td>
+        <td><input type="range" name="cupBottomRadius" value="${7.5 / 2}" min="${7.5 / 2}" max="${15.5 / 2}" step="1"
+            style="width: 200px;"></td>
+        <td style="text-align: right;"><span class="cupBottomRadius"></span> cm</td>
+      </tr>
+      <tr>
+        <td><i>Height</i></td>
+        <td><input type="range" name="cupHeight" value="15.5" min="10.5" max="15.5" step="1" style="width: 200px;">
+        </td>
+        <td style="text-align: right;"><span class="cupHeight"></span> cm</td>
+      </tr>
+    </table>
+
+    <table class="graph-slider what" style="width: auto">
+      <tr>
+        <th colspan="3">What you put in the cup</th>
+      </tr>
+      <tr>
+        <td><i>Tea volume</i></td>
+        <td><input type="range" name="teaVolume" value="450" min="100" max="600" step="5" style="width: 200px;">
+        </td>
+        <td style="text-align: right;"><span class="teaVolume"></span> cm<sup>3</sup></td>
+      </tr>
+      <tr>
+        <td><i>Ice volume</i></td>
+        <td><input name="iceVolume" type=range value="135" min="0" max="300" step="5" style="width: 200px;">
+        </td>
+        <td style="text-align: right;"><span class="iceVolume"></span> cm<sup>3</sup></td>
+      </tr>
+      <tr>
+        <td><i>Boba volume</i></td>
+        <td><input name="bobaVolume" type=range value="110" min="0" max="300" step="5" style="width: 200px;">
+        </td>
+        <td style="text-align: right;"><span class="bobaVolume"></span> cm<sup>3</sup></td>
+      </tr>
+      <tr>
+        <td><i>Boba radius</i></td>
+        <td><input type="range" name="bobaRadius" value="0.6" min="0.4" max="0.6" step="0.2" style="width: 200px;">
+        </td>
+        <td style="text-align: right;"><span class="bobaRadius"></span> cm</td>
+      </tr>
+    </table>
+
+    <table class="graph-slider how" style="width: auto">
+      <tr>
+        <th colspan="3">How you drink it</th>
+      </tr>
+      <tr>
+        <td><i>Tea consumption</i></td>
+        <td><input type="range" name="teaEfficiency" value="100" min="80" max="200" step="10" style="width: 200px;">
+        </td>
+        <td style="text-align: right;"><span class="teaEfficiency"></span> % of normal</td>
+      </tr>
+      <tr>
+        <td><i>Boba consumption</i></td>
+        <td><input type="range" name="bobaEfficiency" value="100" min="80" max="200" step="10" style="width: 200px;">
+        </td>
+        <td style="text-align: right;"><span class="bobaEfficiency"></span> % of normal</td>
+      </tr>
+      <tr>
+        <td><i>Ice melted per sip</i></td>
+        <td><input type="range" name="iceMeltRatio" value="1" min="0" max="25" step="1" style="width: 200px;">
+        </td>
+        <td style="text-align: right;"><span class="iceMeltRatio"></span> %</td>
+      </tr>
+    </table>
+  </div>
+  <div id="contain">
+    <!--
+    <svg id="graph" width="1400" height="400" style="border:1px solid #604d49;"></svg>
+    -->
+    <img id="graph" src="tmp_boba_graphSample.png" width="1400" height="400" style="border:1px solid #604d49;">
+  </div>
+
+
+  <script id="map-code">
+
+    // define map & mini map dimensions
+    const map = d3.select("svg g#map");
+    const mapWidth = map.attr("width");
+    const mapHeight = map.attr("height");
+    const chartArea = map.append("g");
+    const minim = d3.select("svg g#minim");
+    const minimWidth = minim.attr("width");
+    const minimHeight = minim.attr("height");
+    const minimArea = minim.append("g").attr("opacity", 0.5);
+
+
+    // appending mini map features, as shown in lecture
+    map.append("defs").append("clipPath")
+      .attr("id", "chartClip")
+      .append("rect").attr("x", 0)
+      .attr("y", 0)
+      .attr("width", mapWidth)
+      .attr("height", mapHeight);
+    const menu = d3.select("#menu");
+    map.attr("clip-path", "url(#chartClip)");
+    minim.append("defs").append("clipPath")
+      .attr("id", "minichartClip")
+      .append("rect").attr("x", 0)
+      .attr("y", 0)
+      .attr("width", minimWidth)
+      .attr("height", minimHeight);
+    minim.attr("clip-path", "url(#minichartClip)");
+
+
+    // data time woop woop
+    const requestdata = async function () {
+
+      // load boba csv + NYC map
+      const ydata = await d3.csv("boba_nyc.csv");
+      const pdata = await d3.json("NTA.topo.json");
+
+      // define interactive surface area
+      chartArea.append("rect").attr("x", 0).attr("y", 0)
+        .attr("width", mapWidth).attr("height", mapHeight)
+        .attr("fill", "none")
+        .style("pointer-events", "all");
+
+      // map & mini map projections
+      var pitt = topojson.feature(pdata, pdata.objects.collection); // .collection = Neighborhoods_
+      var pittproj = d3.geoMercator().fitSize([900, mapHeight], pitt);
+      var pittpath = d3.geoPath().projection(pittproj);
+      var pitt_mini = topojson.feature(pdata, pdata.objects.collection);
+      var pittproj_mini = d3.geoMercator().fitSize([minimWidth, minimHeight], pitt_mini);
+      var pittpath_mini = d3.geoPath().projection(pittproj_mini);
+
+      // map & mini map restaurant long/lat
+      ydata.forEach(d => { d.Position = pittproj([d.longitude, d.latitude]); });
+      ydata.forEach(d => { d.mini_Position = pittproj_mini([d.longitude, d.latitude]); });
+
+      // draw map & mini map projections
+      chartArea.selectAll("path.neighborhood").data(pitt.features)
+        .join("path")
+        .attr("class", "neighborhood")
+        .attr("d", pittpath);
+      minimArea.selectAll("path.neighborhood").data(pitt.features)
+        .join("path")
+        .attr("class", "neighborhood")
+        .attr("d", pittpath_mini);
+
+      let brushGroup = minimArea.append("g").attr("class", "brush");
+
+      // add bobas to big map 
+      function updatemap(data) {
+        let circles = chartArea.selectAll("image").data(data)
+          .join("image")
+          .attr("xlink:href", "bl_circle_tmp.png")
+          .attr("x", d => d.Position[0])
+          .attr("y", d => d.Position[1])
+          .attr("opacity", 0.5)
+          //.attr("height", 50)
+          //.attr("width", 50)
+          .on("mouseenter", handlemouseenter)
+          .on("mouseout", handlemouseout);
+
+
+        function handlemouseenter() {
+          let c = d3.select(this);
+          c.attr("xlink:href", "bobaball_still.png")
+            .attr("opacity", 1);
+          rectimg.attr("xlink:href", c.datum().image_url);
+
+          txt.text(c.datum().name);
+          txt2.text(c.datum().price); // c.datum().category).toUpperCase()
+          if (c.datum().rating == 1.0) {
+            txt3.text("★");
+          } else if (c.datum().rating == 1.5) {
+            txt3.text("★ ½");
+          } else if (c.datum().rating == 2.0) {
+            txt3.text("★ ★");
+          } else if (c.datum().rating == 2.5) {
+            txt3.text("★ ★ ½");
+          } else if (c.datum().rating == 3.0) {
+            txt3.text("★ ★ ★");
+          } else if (c.datum().rating == 3.5) {
+            txt3.text("★ ★ ★ ½");
+          } else if (c.datum().rating == 4.0) {
+            txt3.text("★ ★ ★ ★");
+          } else if (c.datum().rating == 4.5) {
+            txt3.text("★ ★ ★ ★ ½");
+          } else if (c.datum().rating == 5.0) {
+            txt3.text("★ ★ ★ ★ ★");
+          };
+
+          tooltip.style("visibility", "visible")
+            .attr("transform", "translate(" + (c.datum().Position[0] - 125) + ", " + (c.datum().Position[1] + 45) + ")");
+        }
+
+        function handlemouseout() {
+          let c = d3.select(this);
+          c.attr("xlink:href", "bl_circle_tmp.png")
+            .attr("opacity", 0.5);
+          tooltip.style("visibility", "hidden");
+        }
+
+        // adding tooltip
+        let tooltip = chartArea.append("g")
+          .attr("class", "tooltip")
+          .attr("visibility", "hidden");
+        let hover = tooltip.append("rect")
+          .attr("fill", "#937f74")
+          .attr("stroke", "#604d49")
+          .attr("rx", 8)
+          .attr("width", 300)
+          .attr("height", 100);
+        let txt = tooltip.append("text")
+          .attr("class", "txts")
+          .attr("x", 300 / 2.0)
+          .attr("y", 25)
+          .attr("font-weight", "900")
+          .attr("fill", "#ffffff")
+          .attr("text-anchor", "middle")
+          .attr("alignment-baseline", "central");
+        let txt2 = tooltip.append("text")
+          .attr("class", "txts")
+          .attr("x", 300 / 2.0)
+          .attr("y", 50)
+          .attr("fill", "#ffffff")
+          .attr("text-anchor", "middle")
+          .attr("alignment-baseline", "central");
+        let txt3 = tooltip.append("text")
+          .attr("class", "txts")
+          .attr("x", 300 / 2.0)
+          .attr("y", 75)
+          .attr("text-anchor", "middle")
+          .attr("fill", "#ffffff")
+          .attr("alignment-baseline", "central");
+
+        let rectimg = tooltip.append("image")
+          .attr("x", 70)
+          .attr("y", 40)
+          .attr("width", 75)
+          .attr("height", 45);
+
+        // populate restaurants on mini map
+        let circles_mini = minimArea.selectAll("circle").data(ydata)
+          .join("circle")
+          .attr("cx", d => d.mini_Position[0])
+          .attr("cy", d => d.mini_Position[1])
+          .attr("r", 2)
+          .attr("fill", "#fc6e61")
+          .attr("opacity", 0.5);
+
+        // zooming capabilities
+        let zoomExtent = [[0, 0], [900, mapHeight]];
+        let translateExtent = [[-100, -100], [1000, 1000]];
+        var plotZoom = d3.zoom()
+          .extent(zoomExtent)
+          .translateExtent(translateExtent)
+          .scaleExtent([1, 8])
+          .on("zoom", plotZoomed);
+
+        map.call(plotZoom);
+
+        // adding brush
+        let brush = d3.brush()
+          .extent([[0, 0], [minimWidth, minimHeight]])
+          .on("brush", brushed)
+        brushGroup.call(brush)
+
+        // zoom fxn, as per lecture
+        function plotZoomed(event) {
+
+          let transform = event.transform;
+          chartArea.attr("transform", transform);
+
+          function getcoords(x, y, transform) {
+            var xn = (x - transform.x) / transform.k;
+            var yn = (y - transform.y) / transform.k;
+            return [xn, yn];
+          }
+          minimBounds = [pittproj_mini(
+            pittproj.invert(getcoords(0, 0, event.transform))),
+          pittproj_mini(pittproj.invert(getcoords(mapWidth, mapHeight, event.transform))
+          )]
+
+          circles.attr("width", 50 / transform.k);
+          circles.attr("height", 50 / transform.k);
+          x_translate = 125 / transform.k;
+          y_translate = 46 / transform.k;
+
+          hover.attr("width", 300 / transform.k)
+            .attr("height", 100 / transform.k)
+            .attr("rx", 8 / transform.k)
+            .attr("transform", "translate(" + (125 - x_translate) + ", " + (-45 + y_translate) + ")");
+          txt.attr("font-size", 14 / transform.k)
+            .attr("x", 300 / 2.0 / transform.k)
+            .attr("y", 25 / transform.k)
+            .attr("transform", "translate(" + (125 - x_translate) + ", " + (-45 + y_translate) + ")");
+          txt2.attr("font-size", 12 / transform.k)
+            .attr("x", 300 / 2.0 / transform.k)
+            .attr("y", 50 / transform.k)
+            .attr("transform", "translate(" + (125 - x_translate) + ", " + (-45 + y_translate) + ")");
+          txt3.attr("font-size", 14 / transform.k)
+            .attr("x", 300 / 2.0 / transform.k)
+            .attr("y", 75 / transform.k)
+            .attr("transform", "translate(" + (125 - x_translate) + ", " + (-45 + y_translate) + ")");
+          rectimg.attr("width", 75 / transform.k)
+            .attr("height", 45 / transform.k)
+            .attr("x", 70 / transform.k)
+            .attr("y", 40 / transform.k)
+            .attr("transform", "translate(" + (125 - x_translate) + ", " + (-45 + y_translate) + ")");
+
+          brushGroup.call(brush.move, minimBounds)
+        }
+
+        function brushed({ sourceEvent, selection }) {
+          // need to catch that infinite loop, define fxn as per lecture
+          if (sourceEvent === undefined) {
+            return;
+          }
+          let transform = d3.zoomTransform(chartArea.node());
+          let upperleft = pittproj_mini.invert([selection[0][0], selection[0][1]])
+          let lowerright = pittproj_mini.invert([selection[1][0], selection[1][1]])
+          transform.x = selection[0][0] - (pittproj(upperleft)[0]) * transform.k;
+          transform.y = selection[0][1] - (pittproj(upperleft)[1]) * transform.k;
+          map.call(plotZoom.transform, transform);
+        }
+        map.call(plotZoom.transform, d3.zoomIdentity);
+      }
+      updatemap(ydata);
+
+
+      // checkbox filtering
+      d3.select("button").on("click", function () {
+        var checked = [];
+        var checked_nbhd = []
+        var boxes = d3.selectAll("input.checkbox:checked");
+        var boxes_nbhd = d3.selectAll("input.neighborhoodcheckbox:checked");
+        boxes.each(function () {
+          checked.push(this.value)
+        });
+        boxes_nbhd.each(function () {
+          checked_nbhd.push(this.value)
+        });
+        newdata = ydata.filter((d) => {
+          let pcf = false;
+          let pnf = false;
+
+          if (checked.length === 0) {
+            pcf = true;
+          } else {
+            checked.forEach((category, i) => {
+              pcf = pcf || d['category'] === category
+            });
+          }
+
+          if (checked_nbhd.length === 0) {
+            pnf = true;
+          } else {
+            checked_nbhd.forEach((neighborhood, i) => {
+              pnf = pnf || d['neighborhood'] === neighborhood
+            });
+          }
+          return pcf && pnf;
+        })
+        updatemap(newdata)
+        updateminim(newdata)
+      });
+
+      //clear checkbox
+      d3.select(".clear").on("click", function () {
+        d3.selectAll('input').property('checked', false);
+        d3.select("#menu").remove();
+        updatemap(ydata)
+        updateminim(ydata)
+      });
+
+
+      function updateminim(data) {
+        var pitt_mini = topojson.feature(pdata, pdata.objects.Neighborhoods_);
+        var pittproj_mini = d3.geoMercator().fitSize([minimWidth, minimHeight], pitt_mini);
+        var pittpath_mini = d3.geoPath().projection(pittproj_mini);
+
+        data.forEach(d => {
+          d.mini_Position = pittproj_mini([d.longitude, d.latitude]);
+        });
+
+        let circles_mini = minimArea.selectAll("circle").data(data)
+          .join("circle")
+          .attr("r", 2)
+          .attr("fill", "#fc6e61")
+          .attr("opacity", 0.5)
+          .attr("cx", d => d.mini_Position[0])
+          .attr("cy", d => d.mini_Position[1]);
+      };
+    };
+    requestdata();
+  </script>
+</body>
+
+</html>
